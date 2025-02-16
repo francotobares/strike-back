@@ -20,18 +20,15 @@ app.get('/test', (req, res) => {
 app.use('/users', userRoutes);
 app.use('/vulnerabilities', vulnerabilityRoutes);
 
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('Database connected and synced');
-  })
-  .catch((error) => {
-    console.error('Error syncing database:', error);
-  });
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Only sync database if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  sequelize.sync({ force: false })
+    .then(() => {
+      console.log('Database connected and synced');
+    })
+    .catch((error) => {
+      console.error('Error syncing database:', error);
+    });
+}
 
 module.exports = app; 
