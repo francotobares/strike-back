@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const sequelize = require('./db/connection');
+const { sequelize } = require('./db/connection');
 const userRoutes = require('./routes/userRoutes');
 const vulnerabilityRoutes = require('./routes/vulnerabilityRoutes');
 const swaggerUi = require('swagger-ui-express');
@@ -22,7 +22,7 @@ app.use('/vulnerabilities', vulnerabilityRoutes);
 
 // Only sync database if not in test environment
 if (process.env.NODE_ENV !== 'test') {
-  sequelize.sync({ force: false })
+  sequelize.sync({ force: true })
     .then(() => {
       console.log('Database connected and synced');
     })

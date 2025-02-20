@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
+const vulnerabilityRoutes = require('./routes/vulnerabilityRoutes');
+const { sequelize } = require('./db/connection');
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/vulnerabilities', vulnerabilityRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
@@ -22,7 +25,14 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-}); 
+const PORT = process.env.PORT || 3001;
+sequelize.sync({ force: true })
+  .then(() => {
+    console.log('Database synced successfully');
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch(error => {
+    console.error('Error syncing database:', error);
+  }); 
